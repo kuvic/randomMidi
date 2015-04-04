@@ -41,6 +41,7 @@ int rand_hop_gen ();
 int rand_hop_0 ();
 int get_oct (int note);
 int populate_bar (int note, bar * stru);
+void print_struct (bar * stru);
 int check_note (int note);
 
 char names[12][5] = {"DO","DO+","RE","RE+","MI","FA","FA+","SOL","SOL+","LA","LA+","SI"};
@@ -279,6 +280,8 @@ int main(int argc, char **argv) {
 		// will return zero if everything ok
 		
 		populate_bar(curr_bar_n, &bars_struct[i]);
+		
+		print_struct(&bars_struct[i]);
 		
 		// correct out of range
 		// by checking if out of bounds
@@ -527,6 +530,7 @@ int populate_bar (int note, bar * stru) {
 	// SHUFFLE NOTES
 
 	// print them
+	// put them in structure
 	int i = 0;
 	for (i=0; i<4; i++) {
 		printf("%-5s(%2d) ",names[ temp_notes[i]%12 ], temp_notes[i]);
@@ -536,4 +540,11 @@ int populate_bar (int note, bar * stru) {
 	
 	return 0;
 	
+}
+
+void print_struct (bar * stru) {
+	printf ("Root:%3d n2:%3d n3:%3d n4%3d\n", 	stru->root_chord,
+												stru->notes[1],
+												stru->notes[2],
+												stru->notes[3]);	
 }
