@@ -26,6 +26,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct {
+	int root_chord;	// "root" note of the bar
+	int num_of_notes; 	// max 4
+	int notes[4];		// midi numbers of the notes
+	int durations[4];	// note durations in ?
+} bar;
+
 int parse_root (char * arg);
 int parse_steps (char * arg);
 int parse_steps_R (char * arg, int * steps_p, int * step_num_p);
@@ -33,7 +40,7 @@ int parse_bars (char * arg);
 int rand_hop_gen ();
 int rand_hop_0 ();
 int get_oct (int note);
-int populate_bar (int note);
+int populate_bar (int note, bar * stru);
 int check_note (int note);
 
 char names[12][5] = {"DO","DO+","RE","RE+","MI","FA","FA+","SOL","SOL+","LA","LA+","SI"};
@@ -52,12 +59,7 @@ int limit_oct_down = 2;
 
 int seed1 = 666;
 
-typedef struct {
-	int root_chord;	// "root" note of the bar
-	int num_of_notes; 	// max 4
-	int notes[4];		// midi numbers of the notes
-	int durations[4];	// note durations in ?
-} bar;
+
 
 int main(int argc, char **argv) {
 	
@@ -276,7 +278,7 @@ int main(int argc, char **argv) {
 		// will generate durations
 		// will return zero if everything ok
 		
-		populate_bar(curr_bar_n);
+		populate_bar(curr_bar_n, &bars_struct[i]);
 		
 		// correct out of range
 		// by checking if out of bounds
@@ -430,6 +432,8 @@ int rand_hop_0 () {
 	// 0<hop0<step_num
 	// calling function must check if
 	// note after hoping is out of range
+	
+	return 0;
 }
 
 int rand_hop_gen () {
@@ -468,7 +472,7 @@ int check_note (int note) {
 	return -1;
 }
 
-int populate_bar (int note) {
+int populate_bar (int note, bar * stru) {
 	// feed note and struct pointer to function that
 	// will write note to struct
 	// will generate other notes
@@ -481,6 +485,7 @@ int populate_bar (int note) {
 	
 	// root is root
 	temp_notes[0] = note;
+	stru->root_chord = temp_notes[0];
 	// third - check if in scale
 	// major+4 or minor+5
 	// if not in scale choose one
@@ -512,17 +517,23 @@ int populate_bar (int note) {
 	// set fifth
 	temp_notes[2] = perf_fifth;
 	
-	// set random
+	// set random forth note
 	// loop until finding a note that belongs to the scale
 	do 	{
 	temp_notes[3] = note + steps[rand()%step_num];
 	} while (check_note(temp_notes[3]) <= 0 );
+	
+	// TODO
+	// SHUFFLE NOTES
 
 	// print them
 	int i = 0;
 	for (i=0; i<4; i++) {
 		printf("%-5s(%2d) ",names[ temp_notes[i]%12 ], temp_notes[i]);
+		stru->notes[i] = temp_notes[i];
 	}
 	printf("\n");
+	
+	return 0;
 	
 }
