@@ -512,8 +512,8 @@ int populate_bar (int note) {
 	// set fifth
 	temp_notes[2] = perf_fifth;
 	
-	// TODO set random
-	// WRONG - get notes out of scale
+	// set random
+	// loop until finding a note that belongs to the scale
 	do 	{
 	temp_notes[3] = note + steps[rand()%step_num];
 	} while (check_note(temp_notes[3]) <= 0 );
