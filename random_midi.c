@@ -481,8 +481,9 @@ int populate_bar (int note, bar * stru) {
 	// will generate other notes
 	// will generate durations
 	// will return zero if everything ok
-	int temp_notes[4];
-	int shuffled_notes[4];
+	int notes_num = 4;
+    int temp_notes[notes_num];
+	int shuffled_notes[notes_num];
 	
 	// printf ("Note passed: %2d \n",note);
 	
@@ -528,11 +529,13 @@ int populate_bar (int note, bar * stru) {
 	
 	// TODO
 	// SHUFFLE NOTES
+    // choose one of the four and put it in first place
+    //
 
 	// print them
 	// put them in structure
 	int i = 0;
-	for (i=0; i<4; i++) {
+	for (i=0; i<notes_num; i++) {
 		printf("%-5s(%2d) ",names[ temp_notes[i]%12 ], temp_notes[i]);
 		stru->notes[i] = temp_notes[i];
 	}
