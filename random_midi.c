@@ -25,12 +25,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define MAXNOTESPERBAR 16
 
 typedef struct {
-	int root_chord;	// "root" note of the bar
+	int bar_number;
+    int root_chord;	// "root" note of the bar
 	int num_of_notes; 	// max 4
-	int notes[4];		// midi numbers of the notes
-	int durations[4];	// note durations in ?
+	int notes[MAXNOTESPERBAR];		// midi numbers of the notes
+	int durations[MAXNOTESPERBAR];	// note durations in ?
 } bar;
 
 int parse_root (char * arg);
@@ -40,7 +42,7 @@ int parse_bars (char * arg);
 int rand_hop_gen ();
 int rand_hop_0 ();
 int get_oct (int note);
-int populate_bar (int note, bar * stru);
+int populate_bar (int note, int barn, bar * stru);
 void print_struct (bar * stru);
 int check_note (int note);
 
@@ -57,8 +59,9 @@ int cycle_length = 8;	// cycle length
 int start_octave = 4;	// starting octave
 int limit_oct_up = 3;
 int limit_oct_down = 2;
+int notes_per_bar = 6;
 
-int seed1 = 666;
+int seed1 = 6676;
 
 
 
@@ -176,7 +179,7 @@ int main(int argc, char **argv) {
 	
 	
 	// print a new line
-	printf("\n");
+	// printf("\n");
 	
 	// memory to hold bar structs
 	bar * bars_struct;
@@ -279,7 +282,7 @@ int main(int argc, char **argv) {
 		// will generate durations
 		// will return zero if everything ok
 		
-		populate_bar(curr_bar_n, &bars_struct[i]);
+		populate_bar(curr_bar_n, i, &bars_struct[i]);
 		
 		print_struct(&bars_struct[i]);
 		
@@ -475,13 +478,15 @@ int check_note (int note) {
 	return -1;
 }
 
-int populate_bar (int note, bar * stru) {
+int populate_bar (int note, int barn, bar * stru) {
 	// feed note and struct pointer to function that
 	// will write note to struct
 	// will generate other notes
 	// will generate durations
 	// will return zero if everything ok
-	int notes_num = 4;
+    //  TODO change function to accept notes_per_bar as
+    //  parameter.
+	int notes_num = notes_per_bar;
     int temp_notes[notes_num];
 	int shuffled_notes[notes_num];
 	
@@ -490,7 +495,9 @@ int populate_bar (int note, bar * stru) {
 	// root is root
 	temp_notes[0] = note;
 	stru->root_chord = temp_notes[0];
-	// third - check if in scale
+	stru->num_of_notes = notes_num;
+    stru->bar_number = barn;
+    // third - check if in scale
 	// major+4 or minor+5
 	// if not in scale choose one
 	// of the two randomly
@@ -527,27 +534,36 @@ int populate_bar (int note, bar * stru) {
 	temp_notes[3] = note + steps[rand()%step_num];
 	} while (check_note(temp_notes[3]) <= 0 );
 	
-	// TODO
 	// SHUFFLE NOTES
     // choose one of the four and put it in first place
-    //
-
-	// print them
+    
 	// put them in structure
 	int i = 0;
-	for (i=0; i<notes_num; i++) {
-		printf("%-5s(%2d) ",names[ temp_notes[i]%12 ], temp_notes[i]);
-		stru->notes[i] = temp_notes[i];
+	
+    for (i=0; i<notes_num; i++) {
+        // choose one out of four temp_notes
+        shuffled_notes[i] = temp_notes[rand()%4];
+    }
+    
+    for (i=0; i<notes_num; i++) {
+		// printf("%-5s(%2d) ",names[ shuffled_notes[i]%12 ], shuffled_notes[i]);
+		stru->notes[i] = shuffled_notes[i];
 	}
-	printf("\n");
+	// printf("\n");
 	
 	return 0;
 	
 }
 
 void print_struct (bar * stru) {
-	printf ("Root:%3d n2:%3d n3:%3d n4%3d\n", 	stru->root_chord,
-												stru->notes[1],
-												stru->notes[2],
-												stru->notes[3]);	
+	int n = stru->num_of_notes;
+    printf ("Bar:%3d Root:%3d (%4s)\n", stru->bar_number, stru->root_chord, names[(stru->root_chord)%12] );
+    // loop over notes
+    int i;
+    for (i=0; i<n; i++) {
+        printf ("note %d is %d(%4s)\n",i,stru->notes[i], names[(stru->notes[i])%12]);
+
+    }
+    
+
 }
