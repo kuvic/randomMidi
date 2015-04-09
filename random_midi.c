@@ -29,9 +29,9 @@
 
 typedef struct {
 	int bar_number;
-    int root_chord;	// "root" note of the bar
-	int num_of_notes; 	// max 4
-	int notes[MAXNOTESPERBAR];		// midi numbers of the notes
+	int root_chord;	                // "root" note of the bar
+	int num_of_notes; 	        // max 4
+	int notes[MAXNOTESPERBAR];	// midi numbers of the notes
 	int durations[MAXNOTESPERBAR];	// note durations in ?
 } bar;
 
@@ -48,21 +48,20 @@ int check_note (int note);
 
 char names[12][5] = {"DO","DO+","RE","RE+","MI","FA","FA+","SOL","SOL+","LA","LA+","SI"};
 int notes_all[128];		// array with ALL midi notes
-int root;				// root note
+int root;			// root note
 int steps[12];			// array with steps counting from root
 int step_num;			// number of steps - length of steps array
-int notes_root[128];	// array with SCALE notes
+int notes_root[128];	        // array with SCALE notes
 int notes_root_num;		// number of total scale notes
 int bar_num;			// bars number - length of song
-int octaves_num = 9;	// span in octaves
-int cycle_length = 8;	// cycle length
-int start_octave = 4;	// starting octave
+int octaves_num = 9;	        // span in octaves
+int cycle_length = 8;	        // cycle length
+int start_octave = 4;	        // starting octave
 int limit_oct_up = 3;
 int limit_oct_down = 2;
 int notes_per_bar = 6;
 
 int seed1 = 6676;
-
 
 
 int main(int argc, char **argv) {
@@ -83,28 +82,24 @@ int main(int argc, char **argv) {
 	// arg[8] = seed
 	
 	char usage[] = 	"--root <root_chord> --steps-hex <stepshex> "
-					"--bars <number_of_bars>\n";
+			"--bars <number_of_bars>\n";
 	
 	// check argc number must be 7
 	if (argc!=7) {
-		printf(	"usage:\n%s "
-				"%s",argv[0],usage);
+		printf(	"usage:\n%s %s",argv[0],usage);
 		exit(1);
 	}
 	
 	// error check arguments typing
 	// array with compare results
 	int strcmp_array[3] = 	{
-							strcmp(argv[1],"--root"),
-							strcmp(argv[3],"--steps-hex"),
-							strcmp(argv[5],"--bars")
-							};
+                strcmp(argv[1],"--root"),strcmp(argv[3],"--steps-hex"),strcmp(argv[5],"--bars")
+        };
 							
 	// check if any of the compares is not zero	
 	if (strcmp_array[0]!=0 || strcmp_array[1]!=0 || strcmp_array[2]!=0) 
 	{
-		printf(	"usage:\n%s "
-				"%s",argv[0],usage);
+		printf(	"usage:\n%s %s",argv[0],usage);
 		exit(1);
 	}
 	
@@ -161,7 +156,7 @@ int main(int argc, char **argv) {
 	
 	for (octave=0; octave<octaves_num; octave++) {
 		
-		printf ("\nOCTAVE    #%d\n", octave);
+		printf ("\n____#%d\n", octave);
 		printf (  "------------\n");
 		
 		printf ("[");
@@ -484,10 +479,10 @@ int populate_bar (int note, int barn, bar * stru) {
 	// will generate other notes
 	// will generate durations
 	// will return zero if everything ok
-    //  TODO change function to accept notes_per_bar as
-    //  parameter.
+	//  TODO change function to accept notes_per_bar as
+	//  parameter.
 	int notes_num = notes_per_bar;
-    int temp_notes[notes_num];
+	int temp_notes[notes_num];
 	int shuffled_notes[notes_num];
 	
 	// printf ("Note passed: %2d \n",note);
@@ -496,8 +491,8 @@ int populate_bar (int note, int barn, bar * stru) {
 	temp_notes[0] = note;
 	stru->root_chord = temp_notes[0];
 	stru->num_of_notes = notes_num;
-    stru->bar_number = barn;
-    // third - check if in scale
+	stru->bar_number = barn;
+	// third - check if in scale
 	// major+4 or minor+5
 	// if not in scale choose one
 	// of the two randomly
@@ -535,17 +530,17 @@ int populate_bar (int note, int barn, bar * stru) {
 	} while (check_note(temp_notes[3]) <= 0 );
 	
 	// SHUFFLE NOTES
-    // choose one of the four and put it in first place
-    
+	// choose one of the four and put it in first place
+	
 	// put them in structure
 	int i = 0;
 	
-    for (i=0; i<notes_num; i++) {
-        // choose one out of four temp_notes
-        shuffled_notes[i] = temp_notes[rand()%4];
-    }
-    
-    for (i=0; i<notes_num; i++) {
+	for (i=0; i<notes_num; i++) {
+		// choose one out of four temp_notes
+		shuffled_notes[i] = temp_notes[rand()%4];
+	}
+	
+	for (i=0; i<notes_num; i++) {
 		// printf("%-5s(%2d) ",names[ shuffled_notes[i]%12 ], shuffled_notes[i]);
 		stru->notes[i] = shuffled_notes[i];
 	}
@@ -557,13 +552,13 @@ int populate_bar (int note, int barn, bar * stru) {
 
 void print_struct (bar * stru) {
 	int n = stru->num_of_notes;
-    printf ("Bar:%3d Root:%3d (%4s)\n", stru->bar_number, stru->root_chord, names[(stru->root_chord)%12] );
-    // loop over notes
-    int i;
-    for (i=0; i<n; i++) {
-        printf ("note %d is %d(%4s)\n",i,stru->notes[i], names[(stru->notes[i])%12]);
+	printf ("Bar:%3d Root:%3d (%4s)\n", stru->bar_number, stru->root_chord, names[(stru->root_chord)%12] );
+	// loop over notes
+	int i;
+	for (i=0; i<n; i++) {
+		printf ("note %d is %d(%4s)\n",i,stru->notes[i], names[(stru->notes[i])%12]);
 
-    }
-    
+	}
+	
 
 }
