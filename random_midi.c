@@ -29,8 +29,8 @@
 
 typedef struct {
 	int bar_number;
-	int root_chord;	                // "root" note of the bar
-	int num_of_notes; 	        // max 4
+	int root_chord;			// "root" note of the bar
+	int num_of_notes; 		// max 4
 	int notes[MAXNOTESPERBAR];	// midi numbers of the notes
 	int durations[MAXNOTESPERBAR];	// note durations in ?
 } bar;
@@ -51,12 +51,12 @@ int notes_all[128];		// array with ALL midi notes
 int root;			// root note
 int steps[12];			// array with steps counting from root
 int step_num;			// number of steps - length of steps array
-int notes_root[128];	        // array with SCALE notes
+int notes_root[128];		// array with SCALE notes
 int notes_root_num;		// number of total scale notes
 int bar_num;			// bars number - length of song
-int octaves_num = 9;	        // span in octaves
-int cycle_length = 8;	        // cycle length
-int start_octave = 4;	        // starting octave
+int octaves_num = 9;		// span in octaves
+int cycle_length = 8;		// cycle length
+int start_octave = 4;		// starting octave
 int limit_oct_up = 3;
 int limit_oct_down = 2;
 int notes_per_bar = 6;
@@ -93,8 +93,8 @@ int main(int argc, char **argv) {
 	// error check arguments typing
 	// array with compare results
 	int strcmp_array[3] = 	{
-                strcmp(argv[1],"--root"),strcmp(argv[3],"--steps-hex"),strcmp(argv[5],"--bars")
-        };
+		strcmp(argv[1],"--root"),strcmp(argv[3],"--steps-hex"),strcmp(argv[5],"--bars")
+	};
 							
 	// check if any of the compares is not zero	
 	if (strcmp_array[0]!=0 || strcmp_array[1]!=0 || strcmp_array[2]!=0) 
