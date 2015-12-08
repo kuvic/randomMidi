@@ -48,21 +48,20 @@ int check_note (int note);
 
 char names[12][5] = {"DO","DO+","RE","RE+","MI","FA","FA+","SOL","SOL+","LA","LA+","SI"};
 int notes_all[128];		// array with ALL midi notes
-int root;			// root note
+int root;			    // root note
 int steps[12];			// array with steps counting from root
 int step_num;			// number of steps - length of steps array
-int notes_root[128];		// array with SCALE notes
+int notes_root[128];	// array with SCALE notes
 int notes_root_num;		// number of total scale notes
 int bar_num;			// bars number - length of song
-int octaves_num = 9;		// span in octaves
-int cycle_length = 8;		// cycle length
-int start_octave = 4;		// starting octave
+int octaves_num = 9;	// span in octaves
+int cycle_length = 8;	// cycle length
+int start_octave = 4;	// starting octave
 int limit_oct_up = 3;
 int limit_oct_down = 2;
-int notes_per_bar = 6;
+int notes_per_bar = 8;
 
 int seed1 = 6676;
-
 
 int main(int argc, char **argv) {
 	
@@ -82,7 +81,8 @@ int main(int argc, char **argv) {
 	// arg[8] = seed
 	
 	char usage[] = 	"--root <root_chord> --steps-hex <stepshex> "
-			"--bars <number_of_bars>\n";
+			"--bars <number_of_bars>\n"
+            "example: --root 0 --steps-hex 02457bd --bars 4\n";
 	
 	// check argc number must be 7
 	if (argc!=7) {
@@ -394,7 +394,8 @@ int parse_steps_R (char * arg, int * steps_p, int * step_num_p) {
 				printf("step #%d is wrong. Exiting...\n\n",i);
 				exit(1);
 			}
-			printf ("step %d = %u\n",i,steps_p[i]);		
+			printf ("step %d = %s\n",i,names[steps_p[i]]);
+            // printf ("%s\n",names[steps_p[i]]);        
 		}
 	}
 	
@@ -537,7 +538,16 @@ int populate_bar (int note, int barn, bar * stru) {
 	
 	for (i=0; i<notes_num; i++) {
 		// choose one out of four temp_notes
+        // TODO problem. Does not shuffle.
+        // instead it choses random note
+        // i-times. ex with SOL root
+        // is SOL SOL SI SI SI SI SI
 		shuffled_notes[i] = temp_notes[rand()%4];
+        while ( (i>0) && (shuffled_notes[i]==shuffled_notes[i-1]) && (rand()%3==0)) {
+            printf ("loop\n");
+            shuffled_notes[i] = temp_notes[rand()%4];
+            // printf ("loop\n");
+        }
 	}
 	
 	for (i=0; i<notes_num; i++) {
@@ -545,9 +555,7 @@ int populate_bar (int note, int barn, bar * stru) {
 		stru->notes[i] = shuffled_notes[i];
 	}
 	// printf("\n");
-	
 	return 0;
-	
 }
 
 void print_struct (bar * stru) {
@@ -557,8 +565,5 @@ void print_struct (bar * stru) {
 	int i;
 	for (i=0; i<n; i++) {
 		printf ("note %d is %d(%4s)\n",i,stru->notes[i], names[(stru->notes[i])%12]);
-
 	}
-	
-
 }
