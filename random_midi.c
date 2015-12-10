@@ -476,6 +476,7 @@ int rand_hop_gen () {
 	// rand_hop must NOT be zero
 	do {
 		rand_hop = rand()%(2*step_num) - step_num;
+		printf ("random hop loop");
 	} while (rand_hop==0);
 	
 	// printf ("  --Hop %d\n",rand_hop);
@@ -491,11 +492,12 @@ int check_note (int note) {
 	// and notes_root it returns 0
 	// else returns 1
 	int i = 0;
-	// printf ("got note %d\n",note);
+	printf ("got note %d\n",note);
 	note = note%12;
-	// printf ("trs note %d\n",note);
+	printf ("trs note %d\n",note);
 	for (i=0; i<step_num; i++) {
-		if (notes_root[i]==note) {
+		printf("i:%d notes_root[i]:%d note:%d\n",i,notes_root[i]%12,note);
+		if ((notes_root[i]%12)==note) {
 			return i;
 		}
 	}
@@ -556,6 +558,8 @@ int populate_bar (int note, int barn, bar * stru) {
 	// loop until finding a note that belongs to the scale
 	do 	{
 	temp_notes[3] = note + steps[rand()%step_num];
+	printf ("populate forth note loop\n");
+	printf ("%d\n",temp_notes[3]);
 	} while (check_note(temp_notes[3]) <= 0 );
 	
 	// SHUFFLE NOTES
@@ -573,7 +577,7 @@ int populate_bar (int note, int barn, bar * stru) {
 		shuffled_notes[i] = temp_notes[rand()%4];
 		int RANDOM_FACTOR = 2;
 		while ( (i>0) && (shuffled_notes[i]==shuffled_notes[i-1]) && (rand()%RANDOM_FACTOR==0)) {
-		    // printf ("loop\n");
+		    printf ("shuffle loop\n");
 		    shuffled_notes[i] = temp_notes[rand()%4];
 		    // printf ("loop\n");
         }
