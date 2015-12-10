@@ -83,10 +83,11 @@ int main(int argc, char **argv) {
 	char usage[] = 	"--root <root_chord> --steps-hex <stepshex> "
 			"--bars <number_of_bars>\n"
             "example: --root 0 --steps-hex 02457bd --bars 4\n";
-	
-	// check argc number must be 7
-	if (argc!=7) {
-		printf(	"usage:\n%s %s",argv[0],usage);
+	// printf ("checkpoint");
+	// check argc number must be at least 7
+	if (argc!=9) {
+		printf(	"Arguments fewer than 7.\nusage:\n%s %s",argv[0],usage);
+		printf( "ARGC = %d\n",argc);
 		exit(1);
 	}
 	
@@ -103,6 +104,15 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 	
+	// optional seed
+	if (!(strcmp(argv[7],"--seed"))) {
+		printf ("seed compare check ok\n");
+		seed1 = parse_seed(argv[8]);
+		srand(seed1);
+	}
+	else {
+		printf ("No seed parsed\n");
+	}
 	
 	// PARSE ROOT NOTE START ===========================================
 	// =================================================================
@@ -156,22 +166,20 @@ int main(int argc, char **argv) {
 	
 	for (octave=0; octave<octaves_num; octave++) {
 		
-		printf ("\n____#%d\n", octave);
-		printf (  "------------\n");
+		//printf ("\n____#%d\n", octave);
+		//printf (  "------------\n");
 		
-		printf ("[");
+		//printf ("[");
 		for (step=0; step<step_num; step++) {
 			notes_root[note] = root + octave*12 + steps[step];
-			printf ("%3d ",notes_root[note]);
+			//printf ("%3d ",notes_root[note]);
 			note++;
 			
 		}
-		printf ("]\n");
+		//printf ("]\n");
 	}
 	// NOTE AND SCALE GENERATION END ===================================
 	// =================================================================
-	
-	
 	
 	// print a new line
 	// printf("\n");
@@ -179,8 +187,6 @@ int main(int argc, char **argv) {
 	// memory to hold bar structs
 	bar * bars_struct;
 	bars_struct = (bar *) malloc (sizeof(bar)*bar_num);
-	
-	
 	
 	// find starting note
 	// int start_note = notes_root[start_octave*step_num];
@@ -216,7 +222,7 @@ int main(int argc, char **argv) {
 				curr_bar_ni = prev_bar_o*step_num;
 				curr_bar_n=notes_root[curr_bar_ni];
 				}
-			printf("---------------------------------------\n");	
+			// printf("---------------------------------------\n");	
 			}
 		
 		
@@ -260,13 +266,14 @@ int main(int argc, char **argv) {
 		// from now on we have a note!
 		
 		// print some info
+		/*
 		printf ("BAR %2d - %d", i, i%cycle_length);
 		printf (" Note number %2d", (curr_bar_n));
 		printf (" (%4s)", names[curr_bar_n%12]);
 		
 		printf (" Note index %2d", (curr_bar_ni));
 		printf (" Octave %2d\n",get_oct(curr_bar_n));
-		
+		*/
 		// save cur to previous
 		prev_bar_ni = curr_bar_ni;
 		
@@ -394,7 +401,7 @@ int parse_steps_R (char * arg, int * steps_p, int * step_num_p) {
 				printf("step #%d is wrong. Exiting...\n\n",i);
 				exit(1);
 			}
-			printf ("step %d = %s\n",i,names[steps_p[i]]);
+			printf ("%d - step %d = %s (note name) \n",(root+steps_p[i]),i,names[ (root+steps_p[i])%12 ]);
             // printf ("%s\n",names[steps_p[i]]);        
 		}
 	}
@@ -427,6 +434,27 @@ int parse_bars (char * arg) {
 	return bn;
 	
 }
+
+int parse_seed (char * arg) {
+	
+	int bn;
+	if (arg) {
+		bn = strtol(arg, (char**)0, 10);
+		if (bn<=0 || bn > 100) {
+			printf ("seed number <0 or >100 or not valid. Exiting...\n\n");
+			exit(1);
+		}
+		printf ("Seed number: %d\n", bn);
+	}
+	else {
+		printf ("Missing argument XX, seed number. Exiting...\n\n");
+		exit(1);
+	}
+	
+	return bn;
+	
+}
+
 
 int rand_hop_0 () {
 	// hop after first bar of each cycle
@@ -543,10 +571,11 @@ int populate_bar (int note, int barn, bar * stru) {
         // i-times. ex with SOL root
         // is SOL SOL SI SI SI SI SI
 		shuffled_notes[i] = temp_notes[rand()%4];
-        while ( (i>0) && (shuffled_notes[i]==shuffled_notes[i-1]) && (rand()%3==0)) {
-            printf ("loop\n");
-            shuffled_notes[i] = temp_notes[rand()%4];
-            // printf ("loop\n");
+		int RANDOM_FACTOR = 2;
+		while ( (i>0) && (shuffled_notes[i]==shuffled_notes[i-1]) && (rand()%RANDOM_FACTOR==0)) {
+		    // printf ("loop\n");
+		    shuffled_notes[i] = temp_notes[rand()%4];
+		    // printf ("loop\n");
         }
 	}
 	
@@ -560,6 +589,7 @@ int populate_bar (int note, int barn, bar * stru) {
 
 void print_struct (bar * stru) {
 	int n = stru->num_of_notes;
+	printf ("\n------------------------\n");
 	printf ("Bar:%3d Root:%3d (%4s)\n", stru->bar_number, stru->root_chord, names[(stru->root_chord)%12] );
 	// loop over notes
 	int i;
