@@ -31,10 +31,12 @@
 
 int main(int argc, char **argv)
 {
-	int a = 3;
-	printf ("%#o - %#o\n", a, bswap_16(a));
-	
+//	for (int a = 0;a <10;a++) {
+//		printf ("%d - %#o - %#o\n", a, a, bswap_16(a));
+//	}
 	struct midi_header head1;
+	struct midi_track track1;
+
 	head1.mthd[0]='M';
 	head1.mthd[1]='T';
 	head1.mthd[2]='h';
